@@ -100,8 +100,9 @@ class UnsignedCoin {
 	//	Util.addCrypto();
 	MessageDigest sha1=MessageDigest.getInstance("SHA-1");
 	byte nb[]=new byte[2];
+	Util.hexDump("coin=",xplusd,nCoinLength);
 	for(n=0 ; n < nDigestIterations ; ++n) {
-	    sha1.update(coin,0,nCoinLength);
+	    sha1.update(xplusd,0,nCoinLength);
 	    nb[0]=(byte)(n+1);
 	    nb[1]=(byte)((n+1)/256);
 	    sha1.update(nb,0,2);
