@@ -9,7 +9,7 @@
 
 #define PRIME_LENGTH		(COIN_LENGTH+SHA_DIGEST_LENGTH)
 
-static void cb(int p, int, char *arg)
+static void cb(int p, int, void *arg)
     {
     char c='*';
 

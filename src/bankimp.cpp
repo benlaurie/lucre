@@ -110,17 +110,17 @@ PublicBank::PublicBank(Bank &bank)
     m_pDH->pub_key=BN_dup(bank.pub_key());
     }
 
-void Bank::cb(int p, int, char */*arg*/)
+void Bank::cb(int n, int, char */*arg*/)
     {
     if(!mout)
 	return;
 
     char c='*';
 
-    if (p == 0) c='.';
-    if (p == 1) c='+';
-    if (p == 2) c='*';
-    if (p == 3) c='\n';
+    if (n == 0) c='.';
+    if (n == 1) c='+';
+    if (n == 2) c='*';
+    if (n == 3) c='\n';
     BIO_write(mout,&c,1);
     BIO_flush(mout);
     }
