@@ -61,15 +61,8 @@ class CoinRequest extends PublicCoinRequest {
       throws NoSuchAlgorithmException {
 	BigInteger y;
 
-	for( ; ; )
-	    {
-	    m_coin.random(bank.getCoinLength());
-
-	    y=m_coin.generateCoinNumber(bank);
-
-	    if(y.compareTo(bank.getPrime()) < 0)
-		break;
-	    }
+	m_coin.random(bank);
+	y=m_coin.generateCoinNumber(bank);
 
 	// choose b
 	m_biBlindingFactor=new BigInteger(PublicBank.BLINDING_LENGTH*8,

@@ -1,6 +1,6 @@
 \documentclass[a4paper,titlepage]{article}
 
-\title{Lucre: Anonymous Electronic Tokens v1.6}
+\title{Lucre: Anonymous Electronic Tokens v1.7}
 \author{Ben Laurie \\
 ben@algroup.co.uk}
 
@@ -585,16 +585,17 @@ the mint by producing variants on a signed coin by simpy reblinding
 the coin and the signature - the fact that the coin has a special
 structure prevents this from working.
 
-The one-way coin function can, in principle, be any one way function,
-but the one chosen for Lucre is defined as follows: Let the random
-seed for the coin be in $[0,2^n)$ where 
+The one-way coin function can, in principle, be any one way function
+producing a sufficient number of bits (i.e. around the same number as
+in $p$), but the one chosen for Lucre is defined as follows: Let the
+random seed for the coin be in $[0,2^n)$ where
 
 \qe{n=m+((\log_2(p)-m) \bmod 160)}
 
 $m$ is the minimim number of bits in $x$, chosen to be large
 enough to avoid collisions (128 in Lucre's case). We then define
 
-\qe{\oneway{x}=SHA1(x\|1)\|SHA1(x\|2)\| \cdots \|SHA1(x\|(n-m)/160)}
+\qe{\oneway{x}=x\|SHA1(x\|1)\|SHA1(x\|2)\| \cdots \|SHA1(x\|(\log_2(p)-n)/160)}
 
 where $\|$ denotes concatenation. In case it isn't obvious, this
 ensures that
@@ -603,6 +604,9 @@ ensures that
 
 Note that the resulting coin must actually be in $G$, so it may take
 several attempts to find a correct one.
+
+Also note that Lucre encodes the appended numbers as two bytes, LSB
+first. This is massive overkill and allows for gigantic primes.
 
 \subsection{A Possibly Weak One-Way Coin Function}
 

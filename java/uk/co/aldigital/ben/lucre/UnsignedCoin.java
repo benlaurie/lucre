@@ -58,8 +58,17 @@ import java.security.NoSuchAlgorithmException;
 class UnsignedCoin {
     private BigInteger m_biCoinID;
 
-    public void random(int nCoinLength) {
-	m_biCoinID=new BigInteger(nCoinLength*8,Util.randomGenerator());
+    public void random(PublicBank bank)
+      throws NoSuchAlgorithmException {
+        for( ; ; )
+	    {
+	    m_biCoinID=new BigInteger(bank.getCoinLength()*8,
+				      Util.randomGenerator());
+	    BigInteger y=generateCoinNumber(bank);
+	    if(y.compareTo(bank.getPrime()) < 0
+	       && bank.checkGroupMembership(y))
+		break;
+	    }
     }
     public void set(BigInteger biCoinID) {
 	m_biCoinID=biCoinID;
@@ -84,13 +93,18 @@ class UnsignedCoin {
 	for(n=0 ; n < bank.getCoinLength()-nCoinLength ; ++n)
 	    xplusd[n]=0;
 
-	Util.byteCopy(xplusd,n,m_biCoinID.toByteArray(),0,nCoinLength);
+	byte coin[]=m_biCoinID.toByteArray();
+	Util.byteCopy(xplusd,n,coin,0,nCoinLength);
 	nCoinLength+=n;
 
 	//	Util.addCrypto();
 	MessageDigest sha1=MessageDigest.getInstance("SHA-1");
+	byte nb[]=new byte[2];
 	for(n=0 ; n < nDigestIterations ; ++n) {
-	    sha1.update(xplusd,0,nCoinLength+PublicBank.DIGEST_LENGTH*n);
+	    sha1.update(coin,0,nCoinLength);
+	    nb[0]=(byte)(n+1);
+	    nb[1]=(byte)((n+1)/256);
+	    sha1.update(nb,0,2);
 	    Util.byteCopy(xplusd,nCoinLength+PublicBank.DIGEST_LENGTH*n,
 			  sha1.digest(),0,PublicBank.DIGEST_LENGTH);
 	}
@@ -117,7 +131,7 @@ class UnsignedCoin {
 	    UnsignedCoin coin=new UnsignedCoin();
 
 	    PublicBank bank=new PublicBank(new BufferedReader(new FileReader(args[0])));
-	    coin.random(bank.getCoinLength());
+	    coin.random(bank);
 	    coin.generateCoinNumber(bank);
 	} catch(Exception e) {
 	    System.err.println("Failed: "+e.toString());

@@ -107,6 +107,13 @@ class PublicBank {
     public int getPrimeLengthBits() {
 	return getPrime().bitLength();
     }
+    public boolean checkGroupMembership(BigInteger c) {
+	BigInteger one=BigInteger.valueOf(1);
+	BigInteger two=BigInteger.valueOf(2);
+
+	return m_biGenerator.modPow(m_biPrime.subtract(one).divide(two),
+				    m_biPrime).equals(one);
+    }
 
     public static void main(String args[])
       throws IOException {
