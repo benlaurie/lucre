@@ -70,7 +70,7 @@ class ZKVariant1Client {
 	m_coin=coin;
     }
     void generate() {
-	m_biChallenge=BigInteger.valueOf(Math.abs(Util.randomGenerator().nextInt())%2);
+        m_biChallenge=BigInteger.valueOf(Math.abs(Util.randomGenerator().nextInt())%2);
     }
     void write(PrintStream str) {
 	Util.dumpNumber(str,"challenge=",m_biChallenge);
