@@ -105,7 +105,7 @@ class PublicBank {
     public int getPrimeLengthBits() {
 	return getPrime().bitLength();
     }
-    public boolean checkGroupMembership(BigInteger c) {
+    public boolean checkGroupMembership() {
 	return m_biGenerator.modPow(m_biPrime.shiftRight(1),m_biPrime)
 	    .equals(Util.ONE);
     }
