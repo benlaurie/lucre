@@ -11,19 +11,39 @@ class Bank extends PublicBank {
 
     Bank(int nPrimeLengthBits) {
 	Util.assert(nPrimeLengthBits >= MIN_COIN_LENGTH+DIGEST_LENGTH,"nPrimeLength >= MIN_COIN_LENGTH+DIGEST_LENGTH");
-	m_biGenerator=new BigInteger("2");
-	m_biPrime=Util.generateGermainPrimeWithRemainder(nPrimeLengthBits,
-							 new BigInteger("24"),
-							 new BigInteger("11"),
-							 1);
-	m_biPrivateKey=new BigInteger(getPrimeLengthBits(),
-				      Util.randomGenerator());
+	m_biGenerator=BigInteger.valueOf(4);
+	m_biPrime=Util.generateGermainPrime(nPrimeLengthBits,1);
+
+	m_biPrivateKey=generateExponent();
 	m_biPublicKey=m_biGenerator.modPow(m_biPrivateKey,m_biPrime);
+	verifyGenerator();
     }
     Bank(BufferedReader rdr)
       throws IOException {
 	super(rdr);
 	m_biPrivateKey=Util.readNumber(rdr,"private=");
+    }
+    Bank(String szFile)
+      throws IOException {
+	this(Util.newBufferedFileReader(szFile));
+    }
+    BigInteger generateExponent() {
+	return Util.random(getPrimeLengthBits()-1,
+			   getExponentGroupOrder()
+			   .subtract(BigInteger.valueOf(getPrimeLengthBits()
+							+2+1)));
+    }
+    private void verifyGenerator() {
+	// The generator is supposed to yield g^2 != 1 (mod p)
+	// and g^((p-1)/2) = 1 (mod p)
+	BigInteger one=BigInteger.valueOf(1);
+	BigInteger two=BigInteger.valueOf(2);
+
+	Util.assert(!m_biGenerator.modPow(two,m_biPrime).equals(one),
+		    "g^2 != 1 (mod p)");
+	Util.assert(m_biGenerator.modPow(m_biPrime.subtract(one).divide(two),
+					 m_biPrime).equals(one),
+		    "g^((p-1)/2) = 1 (mod p)");
     }
     public void write(PrintStream out) {
 	writePublic(out);
@@ -35,6 +55,10 @@ class Bank extends PublicBank {
     public void dump(PrintStream out) {
 	super.dump(out);
 	Util.dumpNumber(out,"k=        ",m_biPrivateKey);
+    }
+    public BigInteger getExponentGroupOrder() {
+	return m_biPrime.subtract(BigInteger.valueOf(1))
+	  .divide(BigInteger.valueOf(2));
     }
     public BigInteger getPrivateKey() {
 	return m_biPrivateKey;

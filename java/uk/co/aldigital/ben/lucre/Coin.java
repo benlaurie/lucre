@@ -12,6 +12,10 @@ class Coin extends UnsignedCoin {
       throws IOException {
 	read(reader);
     }
+    Coin(String szFile)
+      throws IOException {
+	this(Util.newBufferedFileReader(szFile));
+    }
     Coin(UnsignedCoin coin,BigInteger biCoinSignature) {
 	set(coin,biCoinSignature);
     }

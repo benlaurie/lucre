@@ -14,6 +14,10 @@ class PublicCoinRequest {
       throws IOException {
 	read(rdr);
     }
+    PublicCoinRequest(String szFile)
+      throws IOException {
+	this(Util.newBufferedFileReader(szFile));
+    }
     void write(PrintStream str) {
 	Util.dumpNumber(str,"request=",m_biCoinRequest);
     }

@@ -39,6 +39,10 @@ class CoinRequest extends PublicCoinRequest {
       throws IOException {
 	read(rdr);
     }
+    CoinRequest(String szFile)
+      throws IOException {
+	this(Util.newBufferedFileReader(szFile));
+    }
     void write(PrintStream str) {
 	super.write(str);
 	m_coin.write(str);

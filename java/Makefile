@@ -4,7 +4,8 @@
 	javac -deprecation -depend $<
 
 LUCRE_CLASSES=LucreIOException Util PublicBank Bank UnsignedCoin Coin \
-	PublicCoinRequest CoinRequest Implementation
+	PublicCoinRequest CoinRequest BlindedCoin ZKVariant1Server \
+	ZKVariant1Client Implementation
 LUCRE=$(LUCRE_CLASSES:%=uk/co/aldigital/ben/lucre/%.class)
 
 all: lucre.jar
@@ -24,6 +25,10 @@ test-coin: all
 	$I bank-sign /tmp/bank-private /tmp/coin-request /tmp/coin-signature
 	$I coin-unblind /tmp/bank-public /tmp/coin-private /tmp/coin-signature /tmp/coin
 	$I bank-verify /tmp/bank-private /tmp/coin
+	$I zk1-generate /tmp/bank-private /tmp/coin-request /tmp/zk1-private /tmp/zk1-public
+	$I zk1-challenge /tmp/zk1-challenge
+	$I zk1-respond /tmp/bank-private /tmp/zk1-private /tmp/zk1-challenge /tmp/zk1-response
+	$I zk1-verify /tmp/bank-public /tmp/zk1-public /tmp/zk1-challenge /tmp/zk1-response /tmp/coin-request /tmp/coin-signature
 
 test2: lucre.jar
 	java uk.co.aldigital.ben.lucre.Bank 288

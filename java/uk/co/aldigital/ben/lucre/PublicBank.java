@@ -23,6 +23,10 @@ class PublicBank {
 	m_biPrime=Util.readNumber(reader,"p=");
 	m_biPublicKey=Util.readNumber(reader,"public=");
     }
+    public PublicBank(String szFile)
+      throws LucreIOException, IOException {
+	this(Util.newBufferedFileReader(szFile));
+    }
     public final BigInteger getPrime() {
 	return m_biPrime;
     }

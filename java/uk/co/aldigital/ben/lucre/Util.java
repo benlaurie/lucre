@@ -1,6 +1,5 @@
 package uk.co.aldigital.ben.lucre;
 
-  //import cryptix.provider.Cryptix;
 import java.io.BufferedReader;
 import java.io.FileOutputStream;
 import java.io.FileReader;
@@ -53,9 +52,33 @@ class Util {
 	    System.out.flush();
 	}
     }
+    static BigInteger generateGermainPrime(int nBitLength,int nCertainty) {
+	Random rand=randomGenerator();
+	for( ; ; ) {
+	    BigInteger biPrime=new BigInteger(nBitLength,nCertainty,rand);
+	    if(biPrime.shiftRight(1).isProbablePrime(nCertainty)) {
+		System.out.println("");
+		return biPrime;
+	    }
+	    System.out.print(".");
+	    System.out.flush();
+	}
+    }
     static Random randomGenerator() {
 	System.err.println("Warning! Low quality randomness in use!");
 	return new Random();
+    }
+    static BigInteger random(BigInteger lower,BigInteger upper) {
+	Random rand=randomGenerator();
+	int nBits=upper.bitLength();
+	for( ; ; ) {
+	    BigInteger b=new BigInteger(nBits,rand);
+	    if(b.compareTo(lower) >= 0 && b.compareTo(upper) <= 0)
+		return b;
+	}
+    }
+    static BigInteger random(int lower,BigInteger upper) {
+	return random(BigInteger.valueOf(lower),upper);
     }
     static void byteCopy(byte dest[],int doff,byte src[],int soff,int len) {
 	for(int n=0 ; n < len ; ++n)

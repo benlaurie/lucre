@@ -33,8 +33,6 @@ class Implementation {
 	String szCoinFile=args[2];
 	String szPublicCoinFile=args[3];
 
-	Util.setDumper(System.err);
-
 	BufferedReader rdrBank=Util.newBufferedFileReader(szBankFile);
 	PrintStream strCoin=Util.newFilePrintStream(szCoinFile);
 	PrintStream strPublicCoin=Util.newFilePrintStream(szPublicCoinFile);
@@ -96,10 +94,8 @@ class Implementation {
 
 	PublicBank bank=new PublicBank(rdrBank);
 	CoinRequest req=new CoinRequest(rdrPrivateRequest);
-	Util.readNumber(rdrSignature,"request=");
-	BigInteger biSignature=Util.readNumber(rdrSignature,"signature=");
-	Util.dumpNumber("signature=",biSignature);
-	Coin coin=req.processResponse(bank,biSignature);
+	BlindedCoin blind=new BlindedCoin(rdrSignature);
+	Coin coin=req.processResponse(bank,blind.getSignature());
 	coin.write(strCoin);
     }
 	
@@ -127,6 +123,81 @@ class Implementation {
 	System.exit(0);
     }
 
+    static void doZK1Generate(String args[])
+      throws IOException {
+	if(args.length != 5) {
+	    System.err.println("zk1-generate <bank info> <coin request> <private file> <public file>");
+	    System.exit(1);
+	}
+	String szBankFile=args[1];
+	String szRequestFile=args[2];
+	String szPrivate=args[3];
+	String szPublic=args[4];
+
+	Bank bank=new Bank(szBankFile);
+	CoinRequest req=new CoinRequest(szRequestFile);
+
+	ZKVariant1Server zk=new ZKVariant1Server(bank,req);
+	zk.generate();
+	zk.write(szPrivate);
+	zk.writePublic(szPublic);
+    }
+
+    static void doZK1Challenge(String args[])
+      throws IOException {
+	if(args.length != 2) {
+	    System.err.println("zk1-challenge <challenge>");
+	    System.exit(1);
+	}
+	String szChallenge=args[1];
+
+	ZKVariant1Client zk=new ZKVariant1Client();
+	zk.generate();
+	zk.write(szChallenge);
+    }
+
+    static void doZK1Respond(String args[])
+      throws IOException {
+	if(args.length != 5) {
+	    System.err.println("zk1-respond <bank private> <zk private> <challenge> <response>");
+	    System.exit(1);
+	}
+	String szBankPrivate=args[1];
+	String szZKPrivate=args[2];
+	String szChallenge=args[3];
+	String szResponse=args[4];
+
+	Bank bank=new Bank(szBankPrivate);
+	ZKVariant1Server zk=new ZKVariant1Server(bank,szZKPrivate);
+	zk.respond(szResponse,szChallenge);
+    }
+
+    static void doZK1Verify(String args[])
+      throws IOException {
+	if(args.length != 7) {
+	    System.err.println("zk1-respond <bank public> <zk public> <challenge> <response> <coin request> <coin>");
+	    System.exit(1);
+	}
+	String szBankPublic=args[1];
+	String szZKPublic=args[2];
+	String szChallenge=args[3];
+	String szResponse=args[4];
+	String szRequest=args[5];
+	String szCoin=args[6];
+
+	PublicBank bank=new PublicBank(szBankPublic);
+	PublicCoinRequest req=new PublicCoinRequest(szRequest);
+	BlindedCoin coin=new BlindedCoin(szCoin);
+	ZKVariant1Client zk=new ZKVariant1Client(bank,req,coin);
+	zk.read(szChallenge);
+	zk.readResponse(szResponse);
+	zk.readCommitments(szZKPublic);
+	if(!zk.verify()) {
+	    System.err.println("ZK verification failed!");
+	    System.exit(1);
+	}
+    }
+
     public static void main(String args[])
       throws IOException,NoSuchAlgorithmException {
 	if(args.length < 1) {
@@ -135,6 +206,8 @@ class Implementation {
 	}
 
 	String function=args[0];
+
+	Util.setDumper(System.err);
 
 	if(function.equals("bank-new")) {
 	    doBankNew(args);
@@ -146,6 +219,14 @@ class Implementation {
 	    doCoinUnblind(args);
 	} else if(function.equals("bank-verify")) {
 	    doBankVerify(args);
+	} else if(function.equals("zk1-generate")) {
+	    doZK1Generate(args);
+	} else if(function.equals("zk1-challenge")) {
+	    doZK1Challenge(args);
+	} else if(function.equals("zk1-respond")) {
+	    doZK1Respond(args);
+	} else if(function.equals("zk1-verify")) {
+	    doZK1Verify(args);
 	} else {
 	    System.err.println("Unknown function: "+function);
 	    System.exit(2);
