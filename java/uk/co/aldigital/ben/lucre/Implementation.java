@@ -43,6 +43,27 @@ class Implementation {
 	req.write(strCoin);
 	((PublicCoinRequest)req).write(strPublicCoin);
     }
+
+    static void doCoinRequest2(String args[])
+      throws NoSuchAlgorithmException,IOException {
+	if(args.length != 4) {
+	    System.err.println("coin-request <bank public info> <coin request> <public coin requet>");
+	    System.exit(1);
+	}
+	String szBankFile=args[1];
+	String szCoinFile=args[2];
+	String szPublicCoinFile=args[3];
+
+	BufferedReader rdrBank=Util.newBufferedFileReader(szBankFile);
+	PrintStream strCoin=Util.newFilePrintStream(szCoinFile);
+	PrintStream strPublicCoin=Util.newFilePrintStream(szPublicCoinFile);
+
+	PublicBank bank=new PublicBank(rdrBank);
+
+	DoubleCoinRequest req=new DoubleCoinRequest(bank);
+	req.write(strCoin);
+	((PublicCoinRequest)req).write(strPublicCoin);
+    }
   
     static void doBankSign(String args[])
       throws IOException {
@@ -94,6 +115,33 @@ class Implementation {
 
 	PublicBank bank=new PublicBank(rdrBank);
 	CoinRequest req=new CoinRequest(rdrPrivateRequest);
+	BlindedCoin blind=new BlindedCoin(rdrSignature);
+	Coin coin=req.processResponse(bank,blind.getSignature());
+	coin.write(strCoin);
+    }
+	
+    static void doCoinUnblind2(String args[])
+      throws IOException {
+	if(args.length != 5) {
+	    System.err.println("coin-unblind <bank public info> <private coin request> <signed coin request> <coin>");
+	    System.exit(1);
+	}
+	String szBankFile=args[1];
+	String szPrivateRequestFile=args[2];
+	String szSignatureFile=args[3];
+	String szCoinFile=args[4];
+
+	Util.setDumper(System.err);
+
+	BufferedReader rdrBank=Util.newBufferedFileReader(szBankFile);
+	BufferedReader rdrPrivateRequest=
+	  Util.newBufferedFileReader(szPrivateRequestFile);
+	BufferedReader rdrSignature=
+	  Util.newBufferedFileReader(szSignatureFile);
+	PrintStream strCoin=Util.newFilePrintStream(szCoinFile);
+
+	PublicBank bank=new PublicBank(rdrBank);
+	DoubleCoinRequest req=new DoubleCoinRequest(rdrPrivateRequest);
 	BlindedCoin blind=new BlindedCoin(rdrSignature);
 	Coin coin=req.processResponse(bank,blind.getSignature());
 	coin.write(strCoin);
@@ -213,10 +261,14 @@ class Implementation {
 	    doBankNew(args);
 	} else if(function.equals("coin-request")) {
 	    doCoinRequest(args);
+	} else if(function.equals("coin-request2")) {
+	    doCoinRequest2(args);
 	} else if(function.equals("bank-sign")) {
 	    doBankSign(args);
 	} else if(function.equals("coin-unblind")) {
 	    doCoinUnblind(args);
+	} else if(function.equals("coin-unblind2")) {
+	    doCoinUnblind2(args);
 	} else if(function.equals("bank-verify")) {
 	    doBankVerify(args);
 	} else if(function.equals("zk1-generate")) {

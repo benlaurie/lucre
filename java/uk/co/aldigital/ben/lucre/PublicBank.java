@@ -36,6 +36,10 @@ class PublicBank {
     public final BigInteger getPublicKey() {
 	return m_biPublicKey;
     }
+    public BigInteger getExponentGroupOrder() {
+	return m_biPrime.subtract(BigInteger.valueOf(1))
+	  .divide(BigInteger.valueOf(2));
+    }
     public void dump(PrintStream out) {
 	Util.dumpNumber(out,"p=        ",m_biPrime);
 	Util.dumpNumber(out,"g=        ",m_biGenerator);

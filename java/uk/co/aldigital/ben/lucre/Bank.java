@@ -56,10 +56,6 @@ class Bank extends PublicBank {
 	super.dump(out);
 	Util.dumpNumber(out,"k=        ",m_biPrivateKey);
     }
-    public BigInteger getExponentGroupOrder() {
-	return m_biPrime.subtract(BigInteger.valueOf(1))
-	  .divide(BigInteger.valueOf(2));
-    }
     public BigInteger getPrivateKey() {
 	return m_biPrivateKey;
     }
