@@ -238,6 +238,35 @@ Alice unblinds $m$, calculating the signature,
 Now $z$ is in the same form as in the original scheme and we can
 proceed as normal.
 
+\section{Cost and Value}
+
+Although there are those that hold that a coin should have a value
+similar to its cost of production, this is clearly insane, at least
+when the coin is to be used as money\footnote{A clear example where it
+is not insane is Adam Back's hashcash used as an anti-spam measure -
+in that case, the whole point is that the coin is expensive to
+produce.}.
+
+In general, the cost of production should be considerably
+less than the value of the coin. So, it is worth calculating the cost
+of producing Lucre coins.
+
+Assuming that the coins are relatively low value, then a 512 bit
+signing key should be sufficient. The cost of producing a coin is
+really the cost of signing it twice (once blinded when withdrawn, and
+once ublinded when deposited). Implemented in Java on a 300 MHz
+Pentium\footnote{Surely nothing can be slower that this?} we can
+achieve 25 signs per second. A server in the Bunker
+(http://www.thebunker.net/) costs \pounds250 per month.
+
+That's \pounds8 per day. 30p per hour, .5p per minute, .001p per second,
+.0004p per sign.
+
+So, values of .01p per coin are easily achievable.
+
+Incidentally, signing with a 1024-bit key takes around 6 times as
+long, so values of .1p with 1024-bit security are also achievable.
+
 \section{Theory}
 
 \subsection{Subgroup Order}
