@@ -3,7 +3,7 @@
 .java.class:
 	javac -deprecation -depend $<
 
-LUCRE_CLASSES=LucreIOException Util PublicBank Bank UnsignedCoin Coin \
+LUCRE_CLASSES=Version LucreIOException Util PublicBank Bank UnsignedCoin Coin \
 	PublicCoinRequest CoinRequest BlindedCoin ZKVariant1Server \
 	ZKVariant1Client Implementation DoubleCoinRequest
 LUCRE=$(LUCRE_CLASSES:%=uk/co/aldigital/ben/lucre/%.class)
@@ -15,7 +15,12 @@ lucre.jar: $(LUCRE)
 
 I=java uk.co.aldigital.ben.lucre.Implementation
 
-test: test-bank test-coin test-zk1 test-coin2
+test: test-bank test-fast
+
+test-fast: test-coin test-zk1 test-coin2
+
+version: all
+	$I version
 
 test-bank: all
 	$I bank-new 288 /tmp/bank-private /tmp/bank-public
