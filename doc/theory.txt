@@ -1,0 +1,94 @@
+The protocol used here is based on this (reformatted) posting by David
+Wagner:
+
+Subject: Chaumian ecash without RSA
+Date: 1996/03/31
+Author: David Wagner <daw@cs.berkeley.edu>
+
+I've always seen Chaum's anonymous ecash system described in terms of
+RSA. RSA has this ungainly patent which probably will be around for
+quite some time, yet the Diffie-Hellman patent expires pretty
+soon. With that motivation, here's a Chaumian anonymous ecash protocol
+based on Diffie-Hellman.
+                     
+Take a publicly known group G and generator g; breaking Diffie-Hellman
+and taking discrete logs in this group should be hard. For instance, G
+might be (Z/pZ)^*, the integers modulo a prime p.
+
+The bank picks a secret value k, and publishes g^k.
+
+To withdraw a coin, Alice picks an x, sets
+
+                    y = x | hash(x),                [  | is concatenation  ]
+
+chosen so that y is in G.  Alice chooses a random secret blinding
+factor b, sends to the bank
+
+                    A->B: y g^b,
+
+and the bank returns
+
+B->A: (y g^b)^k,
+
+debiting Alice's account.
+
+Note that this is a (blinded) Diffie-Hellman key exchange with public
+exponentials g^k and y g^b; the bank returns the exchanged "secret".
+                     
+Alice unblinds this value, computing
+
+                    z = (y g^b)^k (g^k)^{-b}
+
+and now c = (x,z) is a coin in the digital cash system.  Note z = y^k. 
+                     
+We use the traditional online clearing protocol; to deposit the coin,
+a shop S sends
+
+                    S->B: x, z.
+
+The bank checks to make sure the coin hasn't already been spent, and then computes
+
+                    y = x | MD5(x),
+
+checking whether y^k = z.  If equality holds, and the coin hasn't
+already been spent, then the bank credits S's account and adds the
+coin to the list of spent coins.
+
+This is just the same old Chaum anonymous ecash protocol, except that
+I've replaced the RSA operations by Diffie-Hellman ones.  It's a
+lesser-known fact that you can blind a Diffie-Hellman key exchange
+just as you can blind a RSA signature.
+                     
+The security of this protocol depends on the intractibility of
+breaking Diffie-Hellman.  In particular, given public exponentials g^k
+and y = g^m, for k,m unknown, it must be impossible to compute g^{km}
+= y^k.
+
+Furthermore, this protocol depends on the hash function being one-way
+and possessing no interactions with Diffie-Hellman or modular
+exponentiation.
+                     
+Comments?
+
+---------------------
+
+I have modified this original posting in a few minor ways.
+
+Firstly, I used SHA-1 as the basic hash function instead of MD5. This
+is extended further (see below).
+
+Secondly, the value of the coin, x, is chosen to be in the range
+0..2^n, where n = m+((log2(p)-m) mod 160. m is the minimum number of
+coin bits, to avoid collisions (128 in my case).
+
+The hash function used is defined as follows:
+
+h[0](x)=x
+h[k](x)=h[k-1](x)|SHA1(h[k-1](x))
+
+x|hash(x)=h[(n-m)/160](x)
+
+as should be obvious, this means that x|hash(x) has the same number of
+bits as p.
+
+Ben Laurie 17th July 1999
