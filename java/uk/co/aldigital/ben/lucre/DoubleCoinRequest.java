@@ -66,22 +66,18 @@ class DoubleCoinRequest extends PublicCoinRequest {
 	y=m_coin.generateCoinNumber(bank);
 
 	// choose b_y
-	boolean ok=false;
-	while(!ok)
+	BigInteger one=BigInteger.valueOf(1);
+	BigInteger p1=bank.getPrime().subtract(one);
+	for( ; ; )
 	    {
 	    m_biBlindingFactorY=new BigInteger(PublicBank.BLINDING_LENGTH*8,
 					       Util.randomGenerator());
 	    Util.dumpNumber("by=       ",m_biBlindingFactorY);
-	    BigInteger p2=bank.getExponentGroupOrder();
-	    ok=true;
 
-	    // I expect there's a cheaper way to do this.
-	    // Alternately, store the inverse, since that's what we need later
-	    // anyway.
-	    try
-		{ BigInteger byinv=m_biBlindingFactorY.modInverse(p2); }
-	    catch(ArithmeticException e)
-		{ System.out.println("Failed: "+e+", try again!"); ok=false; }
+	    // y has to be an invertible exponent, so ensure it has an inverse
+	    // mod p-1.
+	    if(m_biBlindingFactorY.gcd(p1).equals(one))
+		break;
 	    }
 
 	// choose b_g
@@ -124,8 +120,8 @@ class DoubleCoinRequest extends PublicCoinRequest {
 	z=z.multiply(biSignedCoin);
 	z=z.mod(bank.getPrime());
 
-	BigInteger p2=bank.getExponentGroupOrder();
-	BigInteger byinv=m_biBlindingFactorY.modInverse(p2);
+	BigInteger p1=bank.getPrime().subtract(BigInteger.valueOf(1));
+	BigInteger byinv=m_biBlindingFactorY.modInverse(p1);
 	z=z.modPow(byinv,bank.getPrime());
 
 	return z;

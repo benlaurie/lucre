@@ -120,9 +120,7 @@ class Bank extends PublicBank {
 	t=t.modPow(getPrivateKey(),getPrime());
 	Util.dumpNumber("y^k=      ",t);
 
-	t=t.subtract(coin.getSignature());
-
-	return t.equals(BigInteger.valueOf(0));
+	return t.equals(coin.getSignature());
     }
 
     public static void main(String args[])
