@@ -1,6 +1,6 @@
 \documentclass[a4paper,titlepage]{article}
 
-\title{Lucre: Anonymous Electronic Tokens v1.4}
+\title{Lucre: Anonymous Electronic Tokens v1.5}
 \author{Ben Laurie \\
 ben@algroup.co.uk}
 
@@ -101,7 +101,7 @@ has not already been spent, and that $\oneway x$ is in $G$ and is not
 (i.e. $z=\oneway{x}^k \mod p$). The mint then records $x$ as spent and
 credits Bob's account.
 
-\section{Attack}
+\section{Attack\cite{Anon1}}
 
 Unfortunately an attack on the anonymity of this protocol is
 possible. The mint can mark a coin in a way that only it can detect,
@@ -204,7 +204,7 @@ mint sends $(d,w)$ along with the coin, Alice calculates
 
 and
 
-\qe{(y g^b)^w S^{-d}=v \mod p}
+\qe{(y g^b)^w m^{-d}=v \mod p}
 
 and verifies that $d=hash(u,v)$.
 
@@ -212,7 +212,7 @@ I'm not entirely convinced that it isn't possible to search for (or
 even calculate) a set of values that makes this appear to work whilst
 still signing with $k'$.
 
-\section{Type II Defence}
+\section{Type II Defence\cite{Anon1}}
 
 Another defence is to combine two blinding methods, using two
 indepenent random blinding factors. With this method, the
@@ -471,6 +471,11 @@ That is, the signature can be forged, trivially!
 	\bibitem{Goldberg} Ian Goldberg -- mail to {\sl coderpunks}.
 
 	\bibitem{Wagner} David Wagner -- personal communication.
+
+	\bibitem{Anon1} Anonymous --
+	http://www.mail-archive.com/coderpunks@toad.com/msg02186.html
+	and
+	http://www.mail-archive.com/coderpunks@toad.com/msg02323.html.
 
 \end{thebibliography}
 
