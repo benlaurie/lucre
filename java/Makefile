@@ -15,7 +15,7 @@ lucre.jar: $(LUCRE)
 
 I=java uk.co.aldigital.ben.lucre.Implementation
 
-test: test-bank test-coin test-coin2
+test: test-bank test-coin test-zk1 test-coin2
 
 test-bank: all
 	$I bank-new 288 /tmp/bank-private /tmp/bank-public
@@ -25,6 +25,8 @@ test-coin: all
 	$I bank-sign /tmp/bank-private /tmp/coin-request /tmp/coin-signature
 	$I coin-unblind /tmp/bank-public /tmp/coin-private /tmp/coin-signature /tmp/coin
 	$I bank-verify /tmp/bank-private /tmp/coin
+
+test-zk1: all
 	$I zk1-generate /tmp/bank-private /tmp/coin-request /tmp/zk1-private /tmp/zk1-public
 	$I zk1-challenge /tmp/zk1-challenge
 	$I zk1-respond /tmp/bank-private /tmp/zk1-private /tmp/zk1-challenge /tmp/zk1-response

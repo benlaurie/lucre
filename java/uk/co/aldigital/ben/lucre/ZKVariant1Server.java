@@ -72,7 +72,17 @@ class ZKVariant1Server {
 	read(szFile);
     }
     void generate() {
-	m_bia=m_bank.generateExponent();
+	BigInteger one=BigInteger.valueOf(1);
+        BigInteger p1=m_bank.getPrime().subtract(one);
+        BigInteger p2=m_bank.getPrime().subtract(one);
+        for( ; ; )
+	    {
+	    m_bia=Util.random(1,p2);
+	    // must be invertible module p-1 (so we can generate the inverse
+	    // exponent)
+	    if(m_bia.gcd(p1).equals(one))
+		break;
+	    }
     }
     public void writePublic(PrintStream str) {
 	BigInteger p=m_bank.getPrime();
@@ -109,15 +119,15 @@ class ZKVariant1Server {
 	if(challenge.equals(BigInteger.valueOf(0)))
 	    Util.dumpNumber(str,"x=",m_bia);
 	else {
-	    BigInteger p2=m_bank.getExponentGroupOrder();
-	    BigInteger b=m_bank.getPrivateKey().multiply(m_bia.modInverse(p2))
-	      .mod(p2);
+	    BigInteger p1=m_bank.getPrime().subtract(BigInteger.valueOf(1));
+	    BigInteger b=m_bank.getPrivateKey().multiply(m_bia.modInverse(p1))
+	      .mod(p1);
 	    Util.dumpNumber(str,"x=",b);
 	    Util.dumpNumber("a= ",m_bia);
 	    Util.dumpNumber("b= ",b);
-	    Util.dumpNumber("ab=",b.multiply(m_bia).mod(p2));
+	    Util.dumpNumber("ab=",b.multiply(m_bia).mod(p1));
 	    Util.dumpNumber("k= ",m_bank.getPrivateKey());
-	    Util.assert(b.multiply(m_bia).mod(p2)
+	    Util.assert(b.multiply(m_bia).mod(p1)
 			.equals(m_bank.getPrivateKey()),"ab=k");
 	}
     }
