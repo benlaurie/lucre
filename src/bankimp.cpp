@@ -141,7 +141,8 @@ boolean Bank::Verify(Coin &coin)
     InitCTX();
 
     BIGNUM *t=BN_new();
-    coin.GenerateCoinNumber(t,PrimeLength());
+    if(!coin.GenerateCoinNumber(t,*this))
+	return false;
     BN_mod_exp(t,t,priv_key(),p(),m_ctx);
     DumpNumber("y^k=      ",t);
 

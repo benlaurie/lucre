@@ -46,7 +46,7 @@ public:
 	{ m_pDH=NULL; }
     ~PublicBank()
 	{ DH_free(m_pDH); }
-    const BIGNUM *p()
+    const BIGNUM *p() const
 	{ return m_pDH->p; }
     /*const*/ BIGNUM *g() // regrettably not const, coz C doesn't support mutable
 	{ return m_pDH->g; }
@@ -60,11 +60,11 @@ public:
 	DumpNumber("g=        ",m_pDH->g);
 	DumpNumber("g^k=      ",m_pDH->pub_key);
 	}
-    int CoinLength()
+    int CoinLength() const
 	{
 	return MIN_COIN_LENGTH+(PrimeLength()-MIN_COIN_LENGTH)%DIGEST_LENGTH;
 	}
-    int PrimeLength()
+    int PrimeLength() const
 	{ return BN_num_bytes(p()); }
     };
 
@@ -143,14 +143,16 @@ public:
 	
     BIGNUM *ID()
 	{ return m_bnCoinID; }
-    void GenerateCoinNumber(BIGNUM *bnNumber,int nPrimeLength)
+    boolean GenerateCoinNumber(BIGNUM *bnNumber,const PublicBank &bank)
 	{
 	int nCoinLength=BN_num_bytes(m_bnCoinID);
-	int nDigestIterations=(nPrimeLength-nCoinLength)/DIGEST_LENGTH;
+	int nDigestIterations=(bank.PrimeLength()-nCoinLength)/DIGEST_LENGTH;
 
-	assert(nDigestIterations*DIGEST_LENGTH+nCoinLength == nPrimeLength);
+	if(nCoinLength != bank.CoinLength())
+	    return false;
+
 	unsigned char *xplusd=
-	  static_cast<unsigned char *>(alloca(nPrimeLength));
+	  static_cast<unsigned char *>(alloca(bank.PrimeLength()));
 
 	// generate y=x|hash(x)
 	memset(xplusd,'\0',nCoinLength);
@@ -165,6 +167,8 @@ public:
 
 	BN_bin2bn(xplusd,nCoinLength+nDigestIterations*DIGEST_LENGTH,bnNumber);
 	DumpNumber("y=        ",bnNumber);
+
+	return true;
 	}
     void Dump()
 	{
@@ -265,7 +269,7 @@ public:
 	    {
 	    m_coin.Random(bank.CoinLength());
 
-	    m_coin.GenerateCoinNumber(y,bank.PrimeLength());
+	    m_coin.GenerateCoinNumber(y,bank);
 
 	    if(BN_cmp(y,bank.p()) < 0)
 		break;
