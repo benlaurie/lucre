@@ -57,9 +57,29 @@ import java.util.Random;
 
 class Util {
     static PrintStream strDump;
+    public final static BigInteger ONE=BigInteger.valueOf(1);
 
     static void setDumper(PrintStream str) {
 	strDump=str;
+    }
+    static void hexDump(PrintStream out,String s,byte b[],int n) {
+        int i;
+
+        out.print(s);
+	for(i=0 ; i < n ; ++i)
+	    {
+	    int x=b[i];
+	    if(x < 0)
+		x=256+x;
+	    s=Integer.toString(x,16);
+	    if(s.length() == 1)
+		s="0"+s;
+	    out.print(s);
+	    }
+	out.println();
+    }
+    static void hexDump(String s,byte b[],int n) {
+        hexDump(strDump,s,b,n);
     }
     static void dumpNumber(PrintStream out,String s,BigInteger bi) {
 	out.print(s);
