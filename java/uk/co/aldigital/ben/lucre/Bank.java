@@ -83,13 +83,10 @@ class Bank extends PublicBank {
     private void verifyGenerator() {
 	// The generator is supposed to yield g^2 != 1 (mod p)
 	// and g^((p-1)/2) = 1 (mod p)
-	BigInteger one=BigInteger.valueOf(1);
-	BigInteger two=BigInteger.valueOf(2);
-
-	Util.assert(!m_biGenerator.modPow(two,m_biPrime).equals(one),
+	Util.assert(!m_biGenerator.modPow(Util.TWO,m_biPrime).equals(Util.ONE),
 		    "g^2 != 1 (mod p)");
-	Util.assert(m_biGenerator.modPow(m_biPrime.subtract(one).divide(two),
-					 m_biPrime).equals(one),
+	Util.assert(m_biGenerator.modPow(m_biPrime.shiftRight(1),
+					 m_biPrime).equals(Util.ONE),
 		    "g^((p-1)/2) = 1 (mod p)");
     }
     public void write(PrintStream out) {

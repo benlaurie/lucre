@@ -58,6 +58,7 @@ import java.util.Random;
 class Util {
     static PrintStream strDump;
     public final static BigInteger ONE=BigInteger.valueOf(1);
+    public final static BigInteger TWO=BigInteger.valueOf(2);
 
     static void setDumper(PrintStream str) {
 	strDump=str;

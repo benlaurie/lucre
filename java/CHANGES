@@ -11,3 +11,6 @@ Changes in 0.1:
 
    *) Blinding factors should have been in [1,p-1).
       [Ben Laurie]
+
+   *) Add constants for BigInteger 1 and 2 to Util.java.
+      [Ben Laurie]

@@ -72,15 +72,14 @@ class ZKVariant1Server {
 	read(szFile);
     }
     void generate() {
-	BigInteger one=BigInteger.valueOf(1);
-        BigInteger p1=m_bank.getPrime().subtract(one);
-        BigInteger p2=m_bank.getPrime().subtract(one);
+        BigInteger p1=m_bank.getPrime().subtract(Util.ONE);
+        BigInteger p2=m_bank.getPrime().subtract(Util.ONE);
         for( ; ; )
 	    {
 	    m_bia=Util.random(1,p2);
 	    // must be invertible module p-1 (so we can generate the inverse
 	    // exponent)
-	    if(m_bia.gcd(p1).equals(one))
+	    if(m_bia.gcd(p1).equals(Util.ONE))
 		break;
 	    }
     }
@@ -119,7 +118,7 @@ class ZKVariant1Server {
 	if(challenge.equals(BigInteger.valueOf(0)))
 	    Util.dumpNumber(str,"x=",m_bia);
 	else {
-	    BigInteger p1=m_bank.getPrime().subtract(BigInteger.valueOf(1));
+	    BigInteger p1=m_bank.getPrime().subtract(Util.ONE);
 	    BigInteger b=m_bank.getPrivateKey().multiply(m_bia.modInverse(p1))
 	      .mod(p1);
 	    Util.dumpNumber(str,"x=",b);

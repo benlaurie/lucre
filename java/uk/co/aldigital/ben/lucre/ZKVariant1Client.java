@@ -106,7 +106,7 @@ class ZKVariant1Client {
     }
     boolean verify() {
 	BigInteger p=m_bank.getPrime();
-	if(m_biChallenge.equals(BigInteger.valueOf(1))) {
+	if(m_biChallenge.equals(Util.ONE)) {
 	    // we chose t
 	    BigInteger t=m_biResponse;
 	    BigInteger tmp=m_biA.modPow(t,p);

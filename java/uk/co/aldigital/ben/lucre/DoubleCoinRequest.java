@@ -66,8 +66,7 @@ class DoubleCoinRequest extends PublicCoinRequest {
 	y=m_coin.generateCoinNumber(bank);
 
 	// choose b_y
-	BigInteger one=BigInteger.valueOf(1);
-	BigInteger p1=bank.getPrime().subtract(one);
+	BigInteger p1=bank.getPrime().subtract(Util.ONE);
 	for( ; ; )
 	    {
 	    m_biBlindingFactorY=Util.random(1,bank.getPrime()
@@ -76,7 +75,7 @@ class DoubleCoinRequest extends PublicCoinRequest {
 
 	    // y has to be an invertible exponent, so ensure it has an inverse
 	    // mod p-1.
-	    if(m_biBlindingFactorY.gcd(p1).equals(one))
+	    if(m_biBlindingFactorY.gcd(p1).equals(Util.ONE))
 		break;
 	    }
 
@@ -119,7 +118,7 @@ class DoubleCoinRequest extends PublicCoinRequest {
 	z=z.multiply(biSignedCoin);
 	z=z.mod(bank.getPrime());
 
-	BigInteger p1=bank.getPrime().subtract(BigInteger.valueOf(1));
+	BigInteger p1=bank.getPrime().subtract(Util.ONE);
 	BigInteger byinv=m_biBlindingFactorY.modInverse(p1);
 	z=z.modPow(byinv,bank.getPrime());
 
