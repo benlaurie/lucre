@@ -10,6 +10,7 @@ ben@algroup.co.uk}
 \def\mod#1{\,(\textrm{mod}\,#1)}
 \def\implies{\Rightarrow}
 \def\qe#1{\begin{equation}#1\end{equation}}
+\def\qearray#1{\begin{eqnarray}#1\end{eqnarray}}
 \def\oneway#1{\textrm{oneway}(#1)}
 \def\preoneway#1{\textrm{preoneway}(#1)}
 
@@ -21,8 +22,8 @@ ben@algroup.co.uk}
 This is a revised version of the theory of blinded coins that may not
 violate Chaum's patent\footnote{At least, that's what people
 think. Take legal advice before using this stuff!}, based on the
-original work by David Wagner, and conversations with Ian Goldberg and
-Anonymous.
+original work by David Wagner, and conversations with Ian Goldberg,
+David Molnar, Paul Barreto and various Anonymouses.
 
 \section{Coins}
 
@@ -52,12 +53,11 @@ The mint publishes
 
 \subsection{Withdrawing a Coin}
 
-To withdraw a coin Alice picks a random $x$ from a sufficiently large
-set that two equal values are unlikely to ever be
+To withdraw a coin Alice picks a random $x$, the coin ID, from a
+sufficiently large set that two equal values are unlikely to ever be
 generated\footnote{Remember that if the size of the set of all
 possible coins is $C$, the probability of two being the same is .5
-after around $\sqrt{C}$ coins have been generated.}, the coin ID, and
-calculates,
+after around $\sqrt{C}$ coins have been generated.}, and calculates,
 
 \qe{y=\oneway{x}}
 
@@ -65,9 +65,14 @@ calculates,
 
 \qe{y^{(p-1)/2}=1 \mod p}
 
+however, note that the current form of the oneway function ensures
+that $y$ is in $G$, so this check is redundant.
+
 Alice chooses a random blinding factor $b \in [0,(p-1)/2)$ and sends
-$y g^b$ (the coin request) to the mint. The mint debits Alice's
-account and returns the signature,
+$y g^b$ (the coin request) to the mint\footnote{Paulo Barreto points
+out that the efficiency of the scheme can be improved by calculating
+$g^{b.\preoneway{x}}=y g^b$, thus saving an exponentiation.}. The mint
+debits Alice's account and returns the blinded signature,
 
 \qe{m=(y g^b)^k \mod p}
 
@@ -103,7 +108,7 @@ When Bob submits $c$ to the mint, then the mint calculates
 The mint can then simply look up who sent $y g^b$ to it and thus learn
 Alice's identity.
 
-\section{Defence}
+\section{Type I Defence}
 
 The defence against this attack is to make the mint prove that it has
 signed with $k$ and not some other number. Since the mint must not
@@ -201,6 +206,39 @@ and verifies that $d=hash(u,v)$.
 I'm not entirely convinced that it isn't possible to search for (or
 even calculate) a set of values that makes this appear to work whilst
 still signing with $k'$.
+
+\section{Type II Defence}
+
+Another defence is to combine two blinding methods, using two
+indepenent random blinding factors. With this method, the
+coin-withdrawal protocol changes as follows.
+
+To withdraw a coin Alice picks a random $x$, the coin ID, from a
+sufficiently large set that two equal values are unlikely to ever be
+generated, and calculates,
+
+\qe{y=\oneway{x}}
+
+(see \ref{sec:oneway}). $y$ should be in $G$; check that
+
+\qe{y^{(p-1)/2}=1 \mod p}
+
+Alice chooses random blinding factors $b_y,b_g \in [0,(p-1)/2)$ and
+sends $y^{b_y} g^{b_g}$ (the coin request) to the mint. The mint
+debits Alice's account and returns the blinded signature,
+
+\qe{m=(y^{b_y} g^{b_g})^k \mod p}
+
+Alice unblinds $m$, calculating the signature,
+
+\qearray{z&=&(m.(g^k)^{-b_g})^{1/b_y} \\
+	  &=&((y^{b_y} g^{b_g})^k g^{-kb_g})^{1/b_y} \\
+	  &=&(y^{kb_y} g^{kb_g} g^{-kb_g})^{1/b_y} \\
+	  &=&(y^{kb_y})^{1/b_y} \\
+	  &=&y^k \mod p}
+
+Now $z$ is in the same form as in the original scheme and we can
+proceed as normal.
 
 \section{Theory}
 
