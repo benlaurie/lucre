@@ -1,0 +1,13 @@
+Changes in 0.1:
+
+   *) Switch to using the right oneway function.
+      [Ben Laurie reported by Anthony Towns <aj@azure.humbug.org.au>]
+
+   *) Several number theoretic nonsenses fixed.
+      [Ben Laurie]
+
+   *) Version number added!
+      [Ben Laurie]
+
+   *) Blinding factors should have been in [1,p-1).
+      [Ben Laurie]

@@ -70,8 +70,8 @@ class DoubleCoinRequest extends PublicCoinRequest {
 	BigInteger p1=bank.getPrime().subtract(one);
 	for( ; ; )
 	    {
-	    m_biBlindingFactorY=new BigInteger(PublicBank.BLINDING_LENGTH*8,
-					       Util.randomGenerator());
+	    m_biBlindingFactorY=Util.random(1,bank.getPrime()
+					    .subtract(Util.ONE));
 	    Util.dumpNumber("by=       ",m_biBlindingFactorY);
 
 	    // y has to be an invertible exponent, so ensure it has an inverse
@@ -81,8 +81,7 @@ class DoubleCoinRequest extends PublicCoinRequest {
 	    }
 
 	// choose b_g
-	m_biBlindingFactorG=new BigInteger(PublicBank.BLINDING_LENGTH*8,
-					  Util.randomGenerator());
+	m_biBlindingFactorG=Util.random(1,bank.getPrime().subtract(Util.ONE));
 	Util.dumpNumber("bg=       ",m_biBlindingFactorG);
 
 	// calculate A->B: y^b_y g^b_g

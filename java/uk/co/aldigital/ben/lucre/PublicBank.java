@@ -54,7 +54,6 @@ import java.io.PrintStream;
 import java.math.BigInteger;
 
 class PublicBank {
-    public final static int BLINDING_LENGTH=8;
     public final static int MIN_COIN_LENGTH=16;
     public final static int DIGEST_LENGTH=20;	// Hmmph. Ought to be able to get this from somewhere...
 
