@@ -75,7 +75,8 @@ class UnsignedCoin {
 	int nDigestIterations=(bank.getPrimeLength()-nCoinLength)
 	  /PublicBank.DIGEST_LENGTH;
 
-	if(nCoinLength != bank.getCoinLength())
+	// 1 in 256 will be 1 byte shorter...
+	if(nCoinLength > bank.getCoinLength())
 	    return null;
 
 	byte xplusd[]=new byte[bank.getPrimeLength()];
