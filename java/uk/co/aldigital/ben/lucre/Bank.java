@@ -59,7 +59,7 @@ class Bank extends PublicBank {
     Bank(int nPrimeLengthBits) {
 	Util.assert(nPrimeLengthBits >= MIN_COIN_LENGTH+DIGEST_LENGTH,"nPrimeLength >= MIN_COIN_LENGTH+DIGEST_LENGTH");
 	m_biGenerator=BigInteger.valueOf(4);
-	m_biPrime=Util.generateGermainPrime(nPrimeLengthBits,1);
+	m_biPrime=Util.generateGermainPrime(nPrimeLengthBits,20);
 
 	m_biPrivateKey=generateExponent();
 	m_biPublicKey=m_biGenerator.modPow(m_biPrivateKey,m_biPrime);
