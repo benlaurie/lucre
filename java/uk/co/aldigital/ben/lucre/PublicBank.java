@@ -84,8 +84,7 @@ class PublicBank {
 	return m_biPublicKey;
     }
     public BigInteger getExponentGroupOrder() {
-	return m_biPrime.subtract(BigInteger.valueOf(1))
-	  .divide(BigInteger.valueOf(2));
+        return m_biPrime.shiftRight(1);
     }
     public void dump(PrintStream out) {
 	Util.dumpNumber(out,"p=        ",m_biPrime);
