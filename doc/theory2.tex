@@ -1,6 +1,6 @@
 \documentclass[a4paper,titlepage]{article}
 
-\title{Lucre: Anonymous Electronic Tokens v1.3}
+\title{Lucre: Anonymous Electronic Tokens v1.4}
 \author{Ben Laurie \\
 ben@algroup.co.uk}
 
@@ -24,6 +24,10 @@ violate Chaum's patent\footnote{At least, that's what people
 think. Take legal advice before using this stuff!}, based on the
 original work by David Wagner, and conversations with Ian Goldberg,
 David Molnar, Paul Barreto and various Anonymouses.
+
+Note that this now includes variants that probably do violate the
+patent, but are of sufficient academic interest to be worthy of
+inclusion.
 
 \section{Coins}
 
@@ -60,16 +64,23 @@ after around $\sqrt{C}$ coins have been generated.}, and calculates,
 
 (see \ref{sec:oneway}). $y$ should be in $G$; check that
 
+\qe{1 < y < p-1}
+
+We should avoid the trivial values 1 and -1, because their signatures
+are independent of $k$. Note that many one-way coin functions
+(including the one presented here) provably never produce 1 or -1, but
+we include this condition for completeness.
+
 \qe{y^{(p-1)/2}=1 \mod p}
 
-however, note that the current form of the oneway function ensures
-that $y$ is in $G$, so this check is redundant.
+If it is not, a new coin should be chosen. Note that great care must
+be take if you want to choose a one-way function that guarantees
+membership of $G$ - certainly one attempt (see \ref{sec:badoneway})
+led to disaster.
 
 Alice chooses a random blinding factor $b \in [0,(p-1)/2)$ and sends
-$y g^b$ (the coin request) to the mint\footnote{Paulo Barreto points
-out that the efficiency of the scheme can be improved by calculating
-$g^{b.\preoneway{x}}=y g^b$, thus saving an exponentiation.}. The mint
-debits Alice's account and returns the blinded signature,
+$y g^b$ (the coin request) to the mint. The mint debits Alice's
+account and returns the blinded signature,
 
 \qe{m=(y g^b)^k \mod p}
 
@@ -85,9 +96,10 @@ The coin is then
 
 To spend a coin, Alice simply gives the coin, $c$, to Bob. Bob then
 sends it to the mint to be checked. The mint first ensures that $x$
-has not already been spent, and that $\oneway x$ is in $G$, then checks that
-$z$ is a signature for $x$ (i.e. $z=\oneway{x}^k \mod p$). The mint
-then records $x$ as spent and credits Bob's account.
+has not already been spent, and that $\oneway x$ is in $G$ and is not
+1 or -1, then checks that $z$ is a signature for $x$
+(i.e. $z=\oneway{x}^k \mod p$). The mint then records $x$ as spent and
+credits Bob's account.
 
 \section{Attack}
 
@@ -112,9 +124,7 @@ signed with $k$ and not some other number. Since the mint must not
 reveal $k$, this proof must be a zero-knowledge proof. Two possible
 zero-knowledge proofs are known to me.
 
-\subsection{Variation 1}
-
-This variation was suggested by Ian Goldberg.
+\subsection{Variation 1\cite{Goldberg2}}
 
 Given a coin request, $y g^b$, the mint chooses a random number $r$
  s.t.
@@ -159,9 +169,7 @@ increasingly unlikely to get away with this with each repetition. A
 suspicious challenger could always repeat the protocol until the
 probability of cheating is low enough to make them happy.
 
-\subsection{Variation 2}
-
-This variation is due to Chaum and Pedersen (Crypto '92) (I'm told).
+\subsection{Variation 2\cite{Chaum}}
 
 The mint chooses a random value $r$ and sends Alice
 
@@ -257,6 +265,39 @@ Because this result entangles both the unknown (to the mint) value $y$
 and the, also unknown, value $g^{b_g/b_y}$, the mint cannot even
 verify that this is a correct signature, let alone figure out who gave
 it the blinded coin in the first place.
+
+\section{Type III Defence}
+
+It has recently been pointed out that the Decisional Diffie-Hellman
+(DDH) problem has to be separated from the Diffie-Hellman problem
+(also known as the Computational Diffie-Hellman problem) (DH). In
+particular there are groups where DDH is easy even though DH is
+hard. What this actually means in practice is that although given $g$,
+$g^a$ and $g^b$ we can't find an $h$ s.t. $h=g^{ab}$, we can, given
+$g$, $g^a$, $g^b$ and $g^c$, determine whether $ab=c$ (all modulo $p$,
+of course).\cite{Joux}
+
+Given such a group, it is possible to verify that the signature is
+correct in single blinding without a zero knowledge proof. This works
+like this: once the coin $x$ has been signed, we have $y=oneway(x)$, a
+number $z$ that we hope is $y^k$ (but let us signify our doubt for now
+by calling it $y^{k'}$), $g$ and $g^k$.\cite{Goldberg}
+
+We can check the correctness of $z$ using the easiness of DDH
+as follows: since $g$ is a generator for the group, there must exist a
+$t$ s.t. $y=g^t$. Then we have $g$, $g^t$ (which is $y$), $g^k$ and
+$g^{tk'}$ (which is $y^{k'}=z$). We can use easy DDH to check whether
+$tk=tk'$. If it is, then, of course, $k'=k$ and the signature is
+genuine.
+
+Of course, the groups we are talking about here are not $Z_p^*$. In
+fact, the groups discovered so far with this property are carefully
+constructed elliptic curves.
+
+Note that there may well be an argument that the weakness of DDH in
+this group means that the blind signature constitutes a verifiable
+signature as covered by Chaum's patent and hence would no longer
+sidestep the patent.
 
 \section{Cost and Value}
 
@@ -367,21 +408,71 @@ seed for the coin be in $[0,2^n)$ where
 \qe{n=m+((\log_2(p)-m) \bmod 160)}
 
 $m$ is the minimim number of bits in $x$, chosen to be large
-enough to avoid collisions (128 in Lucre's case). Then define
+enough to avoid collisions (128 in Lucre's case). We then define
 
-\qe{h_0(x)=x, h_k(x)=h_{k-1}(x)|SHA1(h_{k-1}(x))}
+\qe{\oneway{x}=SHA1(x\|1)\|SHA1(x\|2)\| \cdots \|SHA1(x\|(n-m)/160)}
 
-where $|$ denotes concatenation. Then
+where $\|$ denotes concatenation. In case it isn't obvious, this
+ensures that
 
-\qe{\preoneway{x}=h_{(n-m)/160}(x)}
+\qe{\log_2(\oneway x) \approx \log_2(p)}
 
-In case it isn't obvious, this ensures that
+Note that the resulting coin must actually be in $G$, so it may take
+several attempts to find a correct one.
 
-\qe{\log_2(\preoneway x) \approx \log_2(p)}
+\subsection{A Possibly Weak One-Way Coin Function}
 
-We then ensure that $\oneway x$ is in $G$
+In an earlier version of Lucre, we defined the one-way function like
+this
+
+\qe{h_0(x)=x}
+\qe{h_k(x)=h_{k-1}(x)\|SHA1(h_{k-1}(x))}
+
+\qe{\oneway{x}=h_{(n-m)/160}(x)}
+
+The problem with this is that
+
+\qe{\oneway{x|SHA1(x)}=\oneway{x}/2^{160} + O(2^{160})}
+
+Whilst we can't see an attack that uses this property, we find it
+slightly worrying, and so prefer the more conventional construction above.
+
+\subsection{A Bad One-way Coin Function}
+\label{sec:badoneway}
+
+An earlier version of this paper contained an ``improvement'' to the
+one-way coin generation - namely the need to test the resulting coin
+for membership in $G$ was removed by adding an extra step:
 
 \qe{\oneway x=g^{\preoneway x} \mod p}
+
+where $\preoneway$ is the one-way function defined above. This guarantees
+the coin is in $G$. However, the consequences are disastrous\cite{Wagner}.
+
+The mint publishes $g^k \bmod p$. A coin's signature is $\oneway
+x^k \bmod p$. But
+
+\qe{\oneway x^k=(g^{\preoneway x})^k=(g^k)^{\preoneway x} \mod p}
+
+That is, the signature can be forged, trivially!
+
+\begin{thebibliography}{99}
+
+	\bibitem{Goldberg2} Ian Goldberg -- mail to {\sl coderpunks}.
+
+	\bibitem{Chaum} David Chaum and Torben Pedersen -- {\sl
+	"Wallet databases with observers"} -- Advances in Cryptology
+	-- Proceedings of Crypto '92, pp. 89-105.
+
+	\bibitem{Joux} Antoine Joux and Kim Nguyen -- {\sl
+	``Separating Decision Diffie-Hellman from Diffie-Hellman in
+	cryptographic groups''} -- http://eprint.iacr.org/2001/003.
+
+	\bibitem{Goldberg} Ian Goldberg -- mail to {\sl coderpunks}.
+
+	\bibitem{Wagner} David Wagner -- personal communication.
+
+\end{thebibliography}
 
 \end{document}
 
