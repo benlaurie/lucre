@@ -1,6 +1,6 @@
 \documentclass[a4paper,titlepage]{article}
 
-\title{Lucre: Anonymous Electronic Tokens v1.2}
+\title{Lucre: Anonymous Electronic Tokens v1.3}
 \author{Ben Laurie \\
 ben@algroup.co.uk}
 
@@ -237,6 +237,26 @@ Alice unblinds $m$, calculating the signature,
 
 Now $z$ is in the same form as in the original scheme and we can
 proceed as normal.
+
+\subsection{Failed Attack}
+
+If the mint attempts to mark the coin, as before, then let's see what
+happens. The blinded signature is
+
+\qe{m=(y^{b_y} g^{b_g})^{k'} \mod p}
+
+unblinding, Alice gets
+
+\qearray{z&=&(m.(g^k)^{-b_g})^{1/b_y} \\
+	  &=&((y^{b_y} g^{b_g})^{k'} g^{-kb_g})^{1/b_y} \\
+	  &=&(y^{k'b_y} g^{k'b_g} g^{-kb_g})^{1/b_y} \\
+	  &=&(y^{k'b_y} g^{(k'-k)b_g})^{1/b_y} \\
+	  &=&y^{k'} g^{(k'-k)b_g/b_y} \mod p}
+
+Because this result entangles both the unknown (to the mint) value $y$
+and the, also unknown, value $g^{b_g/b_y}$, the mint cannot even
+verify that this is a correct signature, let alone figure out who gave
+it the blinded coin in the first place.
 
 \section{Cost and Value}
 
