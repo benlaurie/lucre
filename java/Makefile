@@ -41,5 +41,13 @@ test2: lucre.jar
 	java uk.co.aldigital.ben.lucre.PublicBank /tmp/bank-public
 	java uk.co.aldigital.ben.lucre.UnsignedCoin /tmp/bank-public
 
+bench-bank: all
+	$I bank-new 512 /tmp/bench-bank-private /tmp/bench-bank-public
+
+bench: lucre.jar
+	$I bank-sign /tmp/bank-private /tmp/coin-request /tmp/coin-signature
+	time $I bank-sign /tmp/bench-bank-private /tmp/coin-request /tmp/coin-signature
+	time $I bank-sign /tmp/bench-bank-private /tmp/coin-request /tmp/coin-signature 100
+
 clean:
 	rm $(LUCRE)

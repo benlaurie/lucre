@@ -220,7 +220,8 @@ generated, and calculates,
 
 \qe{y^{(p-1)/2}=1 \mod p}
 
-Alice chooses random blinding factors $b_y,b_g \in [0,(p-1)/2)$ and
+Alice chooses random blinding factors $b_y,b_g \in [0,(p-1)/2)$,
+ensuring that $b_y$ is invertible $mod (p-1)/2$ and
 sends $y^{b_y} g^{b_g}$ (the coin request) to the mint. The mint
 debits Alice's account and returns the blinded signature,
 
