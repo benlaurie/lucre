@@ -1,6 +1,6 @@
 \documentclass[a4paper,titlepage]{article}
 
-\title{Lucre: Anonymous Electronic Tokens v1.7}
+\title{Lucre: Anonymous Electronic Tokens v1.8}
 \author{Ben Laurie \\
 ben@algroup.co.uk}
 
@@ -130,14 +130,14 @@ zero-knowledge proofs are known to me.
 Given a coin request, $y g^b$, the mint chooses a random number $r$
  s.t.
 
-\qe{r \in [\log_g(p)+1,(p-1)/2-\log_g(p)-1]}
+\qe{r \in [1,p-1)}
 
-and calculates
+s.t. r is invertible modulo $p-1$ (i.e. $gcd(r,p-1)=1$) and calculates
 
-\qe{t=k/r \mod{(p-1)/2}}
+\qe{t=k/r \mod{p-1}}
 
-($(p-1)/2$ rather than $p$ because we are working in $G$, which has order
-$(p-1)/2$). The mint then sends Alice
+($p-1$ rather than $p$ because $r$ and $t$ will be used as exponents
+modulo $p$). The mint then sends Alice
 
 \qe{Q=(y g^b)^r \mod p}
 
@@ -229,10 +229,10 @@ generated, and calculates,
 
 \qe{y^{(p-1)/2}=1 \mod p}
 
-Alice chooses random blinding factors $b_y,b_g \in [0,(p-1)/2)$,
-ensuring that $b_y$ is invertible $mod (p-1)/2$ and
-sends $y^{b_y} g^{b_g}$ (the coin request) to the mint. The mint
-debits Alice's account and returns the blinded signature,
+Alice chooses random blinding factors $b_y,b_g \in [1,p-1)$, ensuring
+that $b_y$ is invertible modulo $p-1$ (i.e. $gcd(y,p-1)=1$) and sends
+$y^{b_y} g^{b_g}$ (the coin request) to the mint. The mint debits
+Alice's account and returns the blinded signature,
 
 \qe{m=(y^{b_y} g^{b_g})^k \mod p}
 
@@ -243,6 +243,9 @@ Alice unblinds $m$, calculating the signature,
 	  &=&(y^{kb_y} g^{kb_g} g^{-kb_g})^{1/b_y} \\
 	  &=&(y^{kb_y})^{1/b_y} \\
 	  &=&y^k \mod p}
+
+not forgetting that $1/b_y$ must be calculated modulo $p-1$, since it is
+used as an exponent.
 
 Now $z$ is in the same form as in the original scheme and we can
 proceed as normal.
@@ -560,14 +563,6 @@ because the order of $g$ is $p-1$, so no $y < p-1$ can give $g^y=1
 
 \qe{(g^n)^{p-1} g^{(p-1)/2}=1 \cdot x \mod p, x \neq 1}
 
-\subsubsection{Invertability}
-
-The ZK proofs require exponents to be invertible, and in any case this
-may be a useful property. This would not be possible in an exponent
-group of order $p-1$ because $x^{-1}
-\mod{p-1}$ does not exist if $gcd(x,p-1) \neq 1$, which would be the
-case for all even $x$.
-
 \subsubsection{Subgroup Order Revisited}
 
 It has been pointed out that using a $g$ that generates the whole
@@ -667,5 +662,16 @@ That is, the signature can be forged, trivially!
 
 \end{thebibliography}
 
-\end{document}
+\section{Change History}
 
+A change history was not kept until v1.8. The original version of this
+paper was written 30 November 1999.
+
+\subsection{Changes in 1.8}
+
+Released 1 June 2003.
+
+Several errors in the handling of exponents in modulo arithmetic and
+checks for invertability were corrected.
+
+\end{document}
