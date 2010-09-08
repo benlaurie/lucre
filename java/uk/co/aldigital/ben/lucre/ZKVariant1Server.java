@@ -126,8 +126,8 @@ class ZKVariant1Server {
 	    Util.dumpNumber("b= ",b);
 	    Util.dumpNumber("ab=",b.multiply(m_bia).mod(p1));
 	    Util.dumpNumber("k= ",m_bank.getPrivateKey());
-	    Util.assert(b.multiply(m_bia).mod(p1)
-			.equals(m_bank.getPrivateKey()),"ab=k");
+	    assert b.multiply(m_bia).mod(p1).equals(m_bank.getPrivateKey())
+		: "ab=k";
 	}
     }
     public void respond(String szResponse,String szChallenge)

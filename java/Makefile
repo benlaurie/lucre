@@ -1,7 +1,7 @@
 .SUFFIXES: .java .class
 
 .java.class:
-	javac -deprecation -depend $<
+	javac -deprecation $<
 
 LUCRE_CLASSES=Version LucreIOException Util PublicBank Bank UnsignedCoin Coin \
 	PublicCoinRequest CoinRequest BlindedCoin ZKVariant1Server \

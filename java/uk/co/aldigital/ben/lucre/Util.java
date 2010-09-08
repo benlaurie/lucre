@@ -171,10 +171,12 @@ class Util {
     }
     */
 
+/*
     static void assert(boolean truth,String failure) {
 	if(!truth) {
 	    System.err.println("assertion failed: "+failure);
 	    System.exit(1);
 	}
     }
+*/
 }

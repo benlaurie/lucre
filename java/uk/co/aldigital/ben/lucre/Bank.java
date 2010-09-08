@@ -57,7 +57,7 @@ class Bank extends PublicBank {
     private BigInteger m_biPrivateKey;
 
     Bank(int nPrimeLengthBits) {
-	Util.assert(nPrimeLengthBits >= MIN_COIN_LENGTH+DIGEST_LENGTH,"nPrimeLength >= MIN_COIN_LENGTH+DIGEST_LENGTH");
+	assert nPrimeLengthBits >= MIN_COIN_LENGTH+DIGEST_LENGTH;
 	m_biGenerator=BigInteger.valueOf(4);
 	m_biPrime=Util.generateGermainPrime(nPrimeLengthBits,20);
 
@@ -83,11 +83,11 @@ class Bank extends PublicBank {
     private void verifyGenerator() {
 	// The generator is supposed to yield g^2 != 1 (mod p)
 	// and g^((p-1)/2) = 1 (mod p)
-	Util.assert(!m_biGenerator.modPow(Util.TWO,m_biPrime).equals(Util.ONE),
-		    "g^2 != 1 (mod p)");
-	Util.assert(m_biGenerator.modPow(m_biPrime.shiftRight(1),
-					 m_biPrime).equals(Util.ONE),
-		    "g^((p-1)/2) = 1 (mod p)");
+	assert !m_biGenerator.modPow(Util.TWO,m_biPrime).equals(Util.ONE)
+	    : "g^2 != 1 (mod p)";
+	assert m_biGenerator.modPow(m_biPrime.shiftRight(1),
+				    m_biPrime).equals(Util.ONE)
+	    : "g^((p-1)/2) = 1 (mod p)";
     }
     public void write(PrintStream out) {
 	writePublic(out);
