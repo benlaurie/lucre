@@ -2,3 +2,10 @@
 .depend.bak
 *.o
 bankdemo
+bank-new
+bank-sign
+bank-verify
+banktest
+banktest2
+coin-request
+coin-unblind
