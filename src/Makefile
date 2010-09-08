@@ -3,7 +3,7 @@ APPS=bankdemo banktest bank-new coin-request bank-sign coin-unblind \
 
 all: depend $(APPS)
 
-INCFLAGS=-I../../openssl/include -DBN_DEBUG -DREF_CHECK -DCRYPTO_MDEBUG -DPEDANTIC
+#INCFLAGS=-I../../openssl/include -DBN_DEBUG -DREF_CHECK -DCRYPTO_MDEBUG -DPEDANTIC
 #CFLAGS=-g $(INCFLAGS) -O2 -pedantic -Wall -Wshadow -Werror -pipe
 CFLAGS=-g $(INCFLAGS) -O2 -Wall -Wshadow -Werror -pipe
 
