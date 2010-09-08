@@ -72,7 +72,7 @@ class Bank : public PublicBank
     {
     BN_CTX *m_ctx;
 
-    static void cb(int p, int, char *arg);
+    static void cb(int p, int, void *arg);
 public:
     Bank(int nPrimeLength)
 	{
