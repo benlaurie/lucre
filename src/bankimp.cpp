@@ -1,6 +1,10 @@
 #include "bank.h"
 #include <openssl/asn1.h>
 
+#ifdef _WIN32
+#include <string.h>
+#endif
+
 static BIO *dout;
 static BIO *mout;
 
