@@ -114,7 +114,7 @@ PublicBank::PublicBank(Bank &bank)
     m_pDH->pub_key=BN_dup(bank.pub_key());
     }
 
-void Bank::cb(int n, int, void */*arg*/)
+void Bank::cb(int n, int, void * /*arg*/)
     {
     if(!mout)
 	return;
