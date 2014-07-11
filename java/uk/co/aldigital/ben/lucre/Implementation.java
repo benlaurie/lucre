@@ -73,7 +73,7 @@ class Implementation {
     static void doCoinRequest(String args[])
       throws NoSuchAlgorithmException,IOException {
 	if(args.length != 4) {
-	    System.err.println("coin-request <bank public info> <coin request> <public coin requet>");
+	    System.err.println("coin-request <bank public info> <coin request> <public coin request>");
 	    System.exit(1);
 	}
 	String szBankFile=args[1];
@@ -94,7 +94,7 @@ class Implementation {
     static void doCoinRequest2(String args[])
       throws NoSuchAlgorithmException,IOException {
 	if(args.length != 4) {
-	    System.err.println("coin-request <bank public info> <coin request> <public coin requet>");
+	    System.err.println("coin-request <bank public info> <coin request> <public coin request>");
 	    System.exit(1);
 	}
 	String szBankFile=args[1];
