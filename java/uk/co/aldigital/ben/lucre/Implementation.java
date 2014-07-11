@@ -88,7 +88,7 @@ class Implementation {
 
 	CoinRequest req=new CoinRequest(bank);
 	req.write(strCoin);
-	((PublicCoinRequest)req).write(strPublicCoin);
+	req.writePublic(strPublicCoin);
     }
 
     static void doCoinRequest2(String args[])
