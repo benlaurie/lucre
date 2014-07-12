@@ -83,9 +83,12 @@ class CoinRequest extends PublicCoinRequest {
 	this(Util.newBufferedFileReader(szFile));
     }
     void write(PrintStream str) {
-	super.write(str);
+	writePublic(str);
 	m_coin.write(str);
 	Util.dumpNumber(str,"blinding=",m_biBlindingFactor);
+    }
+    void writePublic(PrintStream str) {
+	super.write(str);
     }
     void read(BufferedReader rdr)
       throws IOException {

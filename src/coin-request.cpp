@@ -4,7 +4,7 @@ int main(int argc,char **argv)
     {
     if(argc != 4)
 	{
-	fprintf(stderr,"%s <bank public info> <coin request> <public coin requet>\n",argv[0]);
+	fprintf(stderr,"%s <bank public info> <coin request> <public coin request>\n",argv[0]);
 	exit(1);
 	}
     const char *szBankFile=argv[1];
