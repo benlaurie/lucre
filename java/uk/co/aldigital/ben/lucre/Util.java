@@ -53,6 +53,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.math.BigInteger;
+import java.security.SecureRandom;
 import java.util.Random;
 
 class Util {
@@ -133,8 +134,7 @@ class Util {
 	}
     }
     static Random randomGenerator() {
-	System.err.println("Warning! Low quality randomness in use!");
-	return new Random();
+	return new SecureRandom();
     }
     static BigInteger random(BigInteger lower,BigInteger upper) {
 	Random rand=randomGenerator();
