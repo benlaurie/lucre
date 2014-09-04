@@ -1,3 +1,8 @@
+
+#ifdef __APPLE__
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
+
 #include "bank.h"
 #include <openssl/asn1.h>
 
