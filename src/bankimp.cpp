@@ -1,5 +1,14 @@
+
+#ifdef __APPLE__
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
+
 #include "bank.h"
 #include <openssl/asn1.h>
+
+#ifdef _WIN32
+#include <string.h>
+#endif
 
 static BIO *dout;
 static BIO *mout;
@@ -110,7 +119,7 @@ PublicBank::PublicBank(Bank &bank)
     m_pDH->pub_key=BN_dup(bank.pub_key());
     }
 
-void Bank::cb(int n, int, void */*arg*/)
+void Bank::cb(int n, int, void * /*arg*/)
     {
     if(!mout)
 	return;

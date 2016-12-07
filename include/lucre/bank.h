@@ -6,6 +6,10 @@
 #include <memory.h>
 #include <assert.h>
 
+#ifdef _WIN32
+#include <malloc.h>
+#endif
+
 #define MIN_COIN_LENGTH		16
 #define BLINDING_LENGTH		8
 #define DIGEST_LENGTH		SHA_DIGEST_LENGTH
