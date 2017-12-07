@@ -6,6 +6,36 @@
 #include <memory.h>
 #include <assert.h>
 
+#if OPENSSL_VERSION_NUMBER > 0x11000000L
+struct dh_st {
+    /*
+     * This first argument is used to pick up errors when a DH is passed
+     * instead of a EVP_PKEY
+     */
+    int pad;
+    int version;
+    BIGNUM *p;
+    BIGNUM *g;
+    long length;                /* optional */
+    BIGNUM *pub_key;            /* g^x % p */
+    BIGNUM *priv_key;           /* x */
+    int flags;
+    BN_MONT_CTX *method_mont_p;
+    /* Place holders if we want to do X9.42 DH */
+    BIGNUM *q;
+    BIGNUM *j;
+    unsigned char *seed;
+    int seedlen;
+    BIGNUM *counter;
+    int references;
+    CRYPTO_EX_DATA ex_data;
+    const DH_METHOD *meth;
+    ENGINE *engine;
+    CRYPTO_RWLOCK *lock;
+};
+#include <openssl/ossl_typ.h>
+#endif
+
 #ifdef _WIN32
 #include <malloc.h>
 #endif
