@@ -6,7 +6,7 @@
 #include <memory.h>
 #include <assert.h>
 
-#if OPENSSL_VERSION_NUMBER > 0x11000000L
+#if OPENSSL_VERSION_NUMBER > 0x10100000L
 struct dh_st {
     /*
      * This first argument is used to pick up errors when a DH is passed
