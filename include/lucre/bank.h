@@ -7,6 +7,7 @@
 #include <assert.h>
 
 #if OPENSSL_VERSION_NUMBER > 0x10100000L
+#ifndef OT_BUNDLED_LIBRESSL
 struct dh_st {
     /*
      * This first argument is used to pick up errors when a DH is passed
@@ -33,6 +34,7 @@ struct dh_st {
     ENGINE *engine;
     CRYPTO_RWLOCK *lock;
 };
+#endif
 #include <openssl/ossl_typ.h>
 #endif
 
@@ -174,7 +176,7 @@ public:
 
 	assert(BN_num_bytes(m_bnCoinID) == nCoinLength);
 	}
-	
+
     BIGNUM *ID()
 	{ return m_bnCoinID; }
     boolean GenerateCoinNumber(BIGNUM *bnNumber,const PublicBank &bank)
@@ -195,7 +197,7 @@ public:
 	for(int n=0 ; n < nDigestIterations ; ++n)
 	    SHA1(xplusd,nCoinLength+DIGEST_LENGTH*n,
 		 &xplusd[nCoinLength+DIGEST_LENGTH*n]);
-	
+
 	HexDump("x|hash(x)=",xplusd,
 		nCoinLength+nDigestIterations*DIGEST_LENGTH);
 
