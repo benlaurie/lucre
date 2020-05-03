@@ -3,12 +3,18 @@
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 #endif
 
-#include "bank.h"
-#include <openssl/asn1.h>
+extern "C" {
+#include <openssl/bio.h>
+#include <openssl/bn.h>
+#include <openssl/dh.h>
+#include <openssl/ossl_typ.h>
+}
 
-#ifdef _WIN32
-#include <string.h>
-#endif
+#include <cassert>
+#include <cstdio>
+#include <cstring>
+
+#include "bank.h"
 
 static BIO *dout;
 static BIO *mout;
@@ -71,7 +77,7 @@ BIGNUM *ReadNumber(BIO *in,const char *szTitle)
 	sscanf(&szLine[nTLen+n*2],"%02x",&h);
 	aucBN[n]=(unsigned char)h;
 	}
-	
+
     BN_bin2bn(aucBN,n,bn);
 
     return bn;
