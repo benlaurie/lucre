@@ -346,6 +346,7 @@ public:
 	BIGNUM *bnCoinSignature=Unblind(bnSignedCoinRequest,bank);
 	DumpNumber("z=        ",bnCoinSignature);
 	pCoin->Set(m_coin,bnCoinSignature);
+	BN_free(bnCoinSignature);
 	}
     void WriteBIO(BIO *bio);
     void ReadBIO(BIO *bio);
