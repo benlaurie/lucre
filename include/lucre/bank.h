@@ -7,7 +7,6 @@
 #include <assert.h>
 
 #if OPENSSL_VERSION_NUMBER > 0x10100000L
-#ifndef OT_BUNDLED_LIBRESSL
 struct dh_st {
     /*
      * This first argument is used to pick up errors when a DH is passed
@@ -34,7 +33,6 @@ struct dh_st {
     ENGINE *engine;
     CRYPTO_RWLOCK *lock;
 };
-#endif
 #include <openssl/ossl_typ.h>
 #endif
 
