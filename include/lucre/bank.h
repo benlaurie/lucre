@@ -6,6 +6,40 @@
 #include <memory.h>
 #include <assert.h>
 
+#if OPENSSL_VERSION_NUMBER > 0x10100000L
+struct dh_st {
+    /*
+     * This first argument is used to pick up errors when a DH is passed
+     * instead of a EVP_PKEY
+     */
+    int pad;
+    int version;
+    BIGNUM *p;
+    BIGNUM *g;
+    long length;                /* optional */
+    BIGNUM *pub_key;            /* g^x % p */
+    BIGNUM *priv_key;           /* x */
+    int flags;
+    BN_MONT_CTX *method_mont_p;
+    /* Place holders if we want to do X9.42 DH */
+    BIGNUM *q;
+    BIGNUM *j;
+    unsigned char *seed;
+    int seedlen;
+    BIGNUM *counter;
+    int references;
+    CRYPTO_EX_DATA ex_data;
+    const DH_METHOD *meth;
+    ENGINE *engine;
+    CRYPTO_RWLOCK *lock;
+};
+#include <openssl/ossl_typ.h>
+#endif
+
+#ifdef _WIN32
+#include <malloc.h>
+#endif
+
 #define MIN_COIN_LENGTH		16
 #define BLINDING_LENGTH		8
 #define DIGEST_LENGTH		SHA_DIGEST_LENGTH
@@ -140,7 +174,7 @@ public:
 
 	assert(BN_num_bytes(m_bnCoinID) == nCoinLength);
 	}
-	
+
     BIGNUM *ID()
 	{ return m_bnCoinID; }
     boolean GenerateCoinNumber(BIGNUM *bnNumber,const PublicBank &bank)
@@ -161,7 +195,7 @@ public:
 	for(int n=0 ; n < nDigestIterations ; ++n)
 	    SHA1(xplusd,nCoinLength+DIGEST_LENGTH*n,
 		 &xplusd[nCoinLength+DIGEST_LENGTH*n]);
-	
+
 	HexDump("x|hash(x)=",xplusd,
 		nCoinLength+nDigestIterations*DIGEST_LENGTH);
 
@@ -310,6 +344,7 @@ public:
 	BIGNUM *bnCoinSignature=Unblind(bnSignedCoinRequest,bank);
 	DumpNumber("z=        ",bnCoinSignature);
 	pCoin->Set(m_coin,bnCoinSignature);
+	BN_free(bnCoinSignature);
 	}
     void WriteBIO(BIO *bio);
     void ReadBIO(BIO *bio);

@@ -1,5 +1,20 @@
+
+#ifdef __APPLE__
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
+
+extern "C" {
+#include <openssl/bio.h>
+#include <openssl/bn.h>
+#include <openssl/dh.h>
+#include <openssl/ossl_typ.h>
+}
+
+#include <cassert>
+#include <cstdio>
+#include <cstring>
+
 #include "bank.h"
-#include <openssl/asn1.h>
 
 static BIO *dout;
 static BIO *mout;
@@ -62,7 +77,7 @@ BIGNUM *ReadNumber(BIO *in,const char *szTitle)
 	sscanf(&szLine[nTLen+n*2],"%02x",&h);
 	aucBN[n]=(unsigned char)h;
 	}
-	
+
     BN_bin2bn(aucBN,n,bn);
 
     return bn;
@@ -110,7 +125,7 @@ PublicBank::PublicBank(Bank &bank)
     m_pDH->pub_key=BN_dup(bank.pub_key());
     }
 
-void Bank::cb(int n, int, void */*arg*/)
+void Bank::cb(int n, int, void * /*arg*/)
     {
     if(!mout)
 	return;
